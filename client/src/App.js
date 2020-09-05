@@ -90,13 +90,14 @@ class App extends React.Component {
                 <TableCell>Birthday</TableCell>
                 <TableCell>Gender</TableCell>
                 <TableCell>Job</TableCell>
+                <TableCell>Del</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {
                 this.state.customers ?
                   this.state.customers.map(c=> {
-                    return (<Customer id={c.id} key={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job} />);
+                    return (<Customer stateRefresh={this.stateRefresh} id={c.id} key={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job} />);
                   }) 
                 : 
                   <TableRow>
