@@ -101,14 +101,16 @@ class App extends React.Component {
     super(props);
     this.state = {
       customers: "",
-      completed: 0
+      completed: 0,
+      searchKeyword: ""
     }
   }
 
   stateRefresh = () => {
     this.setState({
       customers: "",
-      completed: 0
+      completed: 0, 
+      searchKeyword: ""
     });
     this.callApi()
       .then(res => this.setState({
@@ -133,6 +135,12 @@ class App extends React.Component {
     return body;
   }
 
+  handleValueChange = (e) => {
+    let nextState = {};
+    nextState[e.target.name] = e.target.value;
+    this.setState(nextState);
+  }
+
   progress = () => {
     const { completed } = this.state;
     this.setState({ 
@@ -146,6 +154,15 @@ class App extends React.Component {
 
     if (this.state.customers) {
       clearInterval(this.timer);
+    }
+
+    const filteredComponents = (data) => {
+      data = data.filter((c) => {
+        return c.name.indexOf(this.state.searchKeyword) > -1;
+      })
+      return data.map((c) => {
+        return (<Customer stateRefresh={this.stateRefresh} id={c.id} key={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job} />);
+      });
     }
 
     return (
@@ -173,6 +190,9 @@ class App extends React.Component {
                   root: classes.inputRoot,
                   input: classes.inputInput,
                 }}
+                name="searchKeyword"
+                value={this.state.searchKeyword}
+                onChange={this.handleValueChange}
                 inputProps={{ 'aria-label': 'search' }}
               />
             </div>
@@ -193,9 +213,7 @@ class App extends React.Component {
             <TableBody>
               {
                 this.state.customers ?
-                  this.state.customers.map(c=> {
-                    return (<Customer stateRefresh={this.stateRefresh} id={c.id} key={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job} />);
-                  }) 
+                  filteredComponents(this.state.customers)
                 : 
                   <TableRow>
                     <TableCell colSpan="6" align="center">
